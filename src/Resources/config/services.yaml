@@ -1,0 +1,9 @@
+imports:
+    - { resource: services/payum.yaml }
+    
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+

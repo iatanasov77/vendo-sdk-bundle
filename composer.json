@@ -1,0 +1,31 @@
+{
+    "name": "vankosoft/vendo-sdk-bundle",
+    "type": "library",
+    "description": "The Payum extension. Rapid extensino development",
+    "keywords": [
+        "symfony",
+        "sylius",
+        "vankosoft",
+        "payum",
+        "vendo",
+        "payment"
+    ],
+    "homepage": "https://github.com/iatanasov77/vendo-sdk-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan I. Atanasov",
+            "email": "i.atanasov77@gmail.com"
+        }
+    ],
+    "require": {
+        "vendoservices/vendo-sdk": "^2.1",
+        "vankosoft/payment-bundle": "^4.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vankosoft\\VendoSdkBundle\\": "src/"
+        }
+    },
+    "minimum-stability" : "dev"
+}
