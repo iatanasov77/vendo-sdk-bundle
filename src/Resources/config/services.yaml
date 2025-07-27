@@ -1,5 +1,6 @@
 imports:
     - { resource: services/payum.yaml }
+    - { resource: services/controller.yaml }
     
 services:
     _defaults:
