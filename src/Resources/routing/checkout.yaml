@@ -1,0 +1,9 @@
+vs_vendo_sdk_prepare:
+    path:     /vendo-sdk/prepare
+    controller: Vankosoft\VendoSdkBundle\Controller\VendoSdkController::prepareAction
+    options:
+        expose: true
+
+vs_vendo_sdk_done:
+    path:     /vendo-sdk/done
+    controller: Vankosoft\VendoSdkBundle\Controller\VendoSdkController::doneAction
