@@ -8,4 +8,4 @@ services:
         class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
         arguments: [Vankosoft\VendoSdkBundle\Payum\VendoSdkGatewayFactory]
         tags:
-            - { name: payum.gateway_factory_builder, factory: borica }
+            - { name: payum.gateway_factory_builder, factory: vendo_sdk }
