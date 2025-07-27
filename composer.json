@@ -20,7 +20,10 @@
     ],
     "require": {
         "vendoservices/vendo-sdk": "^2.1",
-        "vankosoft/payment-bundle": "^4.4"
+        "payum/core": "^1.7"
+    },
+    "suggest": {
+        "vankosoft/payment-bundle": "This a Required Core Library."
     },
     "autoload": {
         "psr-4": {
