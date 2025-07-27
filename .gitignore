@@ -1,0 +1,17 @@
+.idea
+composer.phar
+composer.lock
+phpunit.xml
+cov
+vendor
+bin
+
+.phpunit.result.cache
+
+# Backup entities generated with doctrine:generate:entities command
+**/Entity/*~
+
+# VisualParadigm Meta Files
+/doc/technical/VisualParadigm/.PaymentBundle.vpp.lck
+/doc/technical/VisualParadigm/PaymentBundle.vpp.bak_*
+/doc/technical/VisualParadigm/PaymentBundle.vpp.*

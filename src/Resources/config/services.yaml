@@ -1,0 +1,10 @@
+imports:
+    - { resource: services/payum.yaml }
+    - { resource: services/controller.yaml }
+    
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+

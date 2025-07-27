@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+        
+    vankosoft.vendo_sdk_gateway_factory:
+        class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+        arguments: [Vankosoft\VendoSdkBundle\Payum\VendoSdkGatewayFactory]
+        tags:
+            - { name: payum.gateway_factory_builder, factory: borica }
