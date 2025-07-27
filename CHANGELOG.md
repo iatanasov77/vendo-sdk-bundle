@@ -1,3 +1,10 @@
+0.1.2	|	Release date: **27.07.2025**
+============================================
+* Bug-Fixes:
+  - Fix Composer Requirements.
+  - Fix Payum Factory Builder Config.
+
+
 0.1.1	|	Release date: **27.07.2025**
 ============================================
 * Bug-Fixes:
