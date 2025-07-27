@@ -19,8 +19,7 @@
         }
     ],
     "require": {
-        "vendoservices/vendo-sdk": "^2.1",
-        "payum/core": "^1.7"
+        "vendoservices/vendo-sdk": "^2.1"
     },
     "suggest": {
         "vankosoft/payment-bundle": "This a Required Core Library."
