@@ -3,12 +3,25 @@
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\LogicException;
 use Payum\Core\Exception\RequestNotSupportedException;
+use Payum\Core\Action\ActionInterface;
+use Payum\Core\ApiAwareInterface;
+use Payum\Core\ApiAwareTrait;
+use Payum\Core\GatewayAwareTrait;
 
+use Vankosoft\VendoSdkBundle\Payum\Api;
 use Vankosoft\VendoSdkBundle\Payum\Request\Api\CreateTransaction;
-use Vankosoft\VendoSdkBundle\Api\Exceptions;
+use Vankosoft\VendoSdkBundle\Exception;
 
-class CreateTransactionAction extends AbstractApiAction
+class CreateTransactionAction implements ActionInterface, ApiAwareInterface
 {
+    use GatewayAwareTrait;
+    use ApiAwareTrait;
+    
+    public function __construct()
+    {
+        $this->apiClass = Api::class;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -20,13 +33,7 @@ class CreateTransactionAction extends AbstractApiAction
         $model = ArrayObject::ensureArrayObject( $request->getModel() );
 
         try {
-            $redirectUrl    = $this->getBoricaFactory()
-                                    ->request()
-                                    ->amount( '1' ) // 1 BGN
-                                    ->orderID( 1 ) // Unique identifier in your system
-                                    ->description( 'testing the process' ) // Short description of the purchase (up to 125 chars)
-                                    ->currency( 'BGN' ) // The currency of the payment
-                                    ->register(); // Type of the request
+            $status  = $this->api->doPreAuthorizeCreditCard( (array)$model );
             
             /*
             $charge = Charge::create($model->toUnsafeArrayWithoutLocal());

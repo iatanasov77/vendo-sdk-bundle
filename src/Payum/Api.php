@@ -1,26 +1,32 @@
-<?php namespace Vankosoft\VendoSdkBundle\Api;
+<?php namespace Vankosoft\VendoSdkBundle\Payum;
 
+use Payum\Core\Bridge\Spl\ArrayObject;
 use VendoSdk\S2S\Request\Payment;
-use Vankosoft\VendoSdkBundle\Payum\Keys;
 
-final class Factory
+class Api
 {
-    /** @var Keys */
-    private $apiKeys;
+    /** @var mixed */
+    protected $options = [];
 
-    public function __construct( Keys $apiKeys )
+    /**
+     * Api constructor.
+     * @param array $options
+     */
+    public function __construct( array $options )
     {
-        $this->apiKeys  = $apiKeys;
+        $options = ArrayObject::ensureArrayObject( $options );
+        $options->defaults( $this->options );
+        $this->options = $options;
     }
     
-    public function preAuthorizeCreditCard()
+    public function doPreAuthorizeCreditCard()
     {
         try {
             $creditCardPayment = new Payment();
-            $creditCardPayment->setApiSecret( $this->apiKeys->getApiSecret() );
-            $creditCardPayment->setMerchantId( $this->apiKeys->getMerchantId() );//Your Vendo Merchant ID
-            $creditCardPayment->setSiteId( $this->apiKeys->getSiteId() );//Your Vendo Site ID
-            $creditCardPayment->setIsTest( $this->apiKeys->getIsTest() );
+            $creditCardPayment->setApiSecret( $this->options['api_secret'] );
+            $creditCardPayment->setMerchantId( $this->options['merchant_id'] );//Your Vendo Merchant ID
+            $creditCardPayment->setSiteId( $this->options['site_id'] );//Your Vendo Site ID
+            $creditCardPayment->setIsTest( $this->options['sandbox'] );
             
             //Set this flag to true when you do not want to capture the transaction amount immediately, but only validate the
             // payment details and block (reserve) the amount. The capture of a preauth-only transaction can be performed with

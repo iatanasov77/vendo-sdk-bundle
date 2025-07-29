@@ -1,4 +1,4 @@
-<?php namespace Vankosoft\VendoSdkBundle\Api\Exceptions;
+<?php namespace Vankosoft\VendoSdkBundle\Exception;
 
 /**
  * Implements properties and methods common to all (non-SPL) Stripe exceptions.

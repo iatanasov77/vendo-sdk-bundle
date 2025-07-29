@@ -55,7 +55,7 @@ class VendoSdkGatewayFactory extends GatewayFactory
             $config['payum.api'] = function ( ArrayObject $config ) {
                 $config->validateNotEmpty( $config['payum.required_options'] );
 
-                return new Keys( $config );
+                return new Api( (array)$config );
             };
         }
     }

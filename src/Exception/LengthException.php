@@ -1,4 +1,4 @@
-<?php namespace Vankosoft\VendoSdkBundle\Api\Exceptions;
+<?php namespace Vankosoft\VendoSdkBundle\Exception;
 
 class LengthException extends \LengthException implements ExceptionInterface
 {
