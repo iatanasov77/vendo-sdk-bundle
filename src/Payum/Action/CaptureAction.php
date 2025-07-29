@@ -7,7 +7,7 @@ use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Request\Capture;
 use Payum\Core\Exception\RequestNotSupportedException;
 
-use Vankosoft\VendoSdkBundle\Payum\Request\Api\CreateTransaction;
+use Vankosoft\VendoSdkBundle\Payum\Request\Api\CreditCardPayment;
 
 class CaptureAction implements ActionInterface, GatewayAwareInterface
 {
@@ -28,7 +28,7 @@ class CaptureAction implements ActionInterface, GatewayAwareInterface
             return;
         }
         
-        $this->gateway->execute( new CreateTransaction( $model ) );
+        $this->gateway->execute( new CreditCardPayment( $model ) );
     }
 
     /**

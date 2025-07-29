@@ -29,7 +29,7 @@ class VendoSdkController extends AbstractCheckoutController
         $captureToken = $this->payum->getTokenFactory()->createCaptureToken(
             $cart->getPaymentMethod()->getGateway()->getGatewayName(),
             $payment,
-            'vs_borica_done'
+            'vs_vendo_sdk_done'
         );
         
         return $this->redirect( $captureToken->getTargetUrl() );
