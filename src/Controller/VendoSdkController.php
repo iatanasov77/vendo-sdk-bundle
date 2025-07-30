@@ -13,7 +13,8 @@ class VendoSdkController extends AbstractCheckoutController
     {
         $cart           = $this->orderFactory->getShoppingCart();
         $formPost       = $request->request->all( 'vendo_credit_card_form' );
-        echo '<pre>'; var_dump( $formPost ); die;
+        //echo '<pre>'; var_dump( $formPost ); die;
+        echo '<pre>'; var_dump( $_POST ); die;
         $payment        = $this->preparePayment( $cart );
         
         $captureToken   = $this->payum->getTokenFactory()->createCaptureToken(
