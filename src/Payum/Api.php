@@ -5,6 +5,8 @@ use VendoSdk\S2S\Request\Payment;
 
 class Api
 {
+    const PRICING_PLAN_ATTRIBUTE_KEY    = 'vendo_plan_id';
+    
     /** @var mixed */
     protected $options = [];
 

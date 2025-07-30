@@ -4,6 +4,9 @@ use Vankosoft\PaymentBundle\Controller\AbstractCheckoutController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Vankosoft\PaymentBundle\Model\Interfaces\OrderInterface;
+use Vankosoft\VendoSdkBundle\Payum\Api as VendoSdkApi;
+
 class VendoSdkController extends AbstractCheckoutController
 {
     public function prepareAction( Request $request ): Response
@@ -69,10 +72,10 @@ class VendoSdkController extends AbstractCheckoutController
             if (
                 $this->vsPayment->isGatewaySupportRecurring( $gateway ) &&
                 $cart->hasRecurringPayment() &&
-                \array_key_exists( StripeApi::PRICING_PLAN_ATTRIBUTE_KEY, $gtAttributes )
+                \array_key_exists( VendoSdkApi::PRICING_PLAN_ATTRIBUTE_KEY, $gtAttributes )
             ) {
                 // Subscribing a customer to a plan
-                $paymentDetails['local']['customer']['plan'] = $gtAttributes[StripeApi::PRICING_PLAN_ATTRIBUTE_KEY];
+                $paymentDetails['local']['customer']['plan'] = $gtAttributes[VendoSdkApi::PRICING_PLAN_ATTRIBUTE_KEY];
             }
         }
         
