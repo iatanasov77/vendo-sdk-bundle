@@ -12,10 +12,8 @@ class VendoSdkController extends AbstractCheckoutController
     public function prepareAction( Request $request ): Response
     {
         $cart           = $this->orderFactory->getShoppingCart();
-        $formPost       = $request->request->all( 'vendo_credit_card_form' );
-        //echo '<pre>'; var_dump( $formPost ); die;
-        echo '<pre>'; var_dump( $_POST ); die;
-        $payment        = $this->preparePayment( $cart );
+        $formPost       = $request->request->all( 'credit_card_form' );
+        $payment        = $this->preparePayment( $cart, $formPost );
         
         $captureToken   = $this->payum->getTokenFactory()->createCaptureToken(
             $cart->getPaymentMethod()->getGateway()->getGatewayName(),
@@ -26,7 +24,7 @@ class VendoSdkController extends AbstractCheckoutController
         return $this->redirect( $captureToken->getTargetUrl() );
     }
     
-    protected function preparePayment( OrderInterface $cart )
+    protected function preparePayment( OrderInterface $cart, array $formPost )
     {
         $storage = $this->payum->getStorage( $this->paymentClass );
         $payment = $storage->create();
@@ -43,7 +41,7 @@ class VendoSdkController extends AbstractCheckoutController
         $payment->setClientEmail( $user ? $user->getEmail() : 'UNREGISTERED_USER' );
         
         // Payment Details
-        $paymentDetails   = $this->preparePaymentDetails( $cart );
+        $paymentDetails   = $this->preparePaymentDetails( $cart, $formPost );
         $payment->setDetails( $paymentDetails );
         
         $this->doctrine->getManager()->persist( $cart );
@@ -53,13 +51,17 @@ class VendoSdkController extends AbstractCheckoutController
         return $payment;
     }
     
-    protected function preparePaymentDetails( OrderInterface $cart ): array
+    protected function preparePaymentDetails( OrderInterface $cart, array $formPost ): array
     {
         $paymentDetails   = [
             'local' => [
                 'save_card' => true,
             ]
         ];
+        
+        if ( ! empty( $formPost ) ) {
+            $paymentDetails['local']['credit_card'] = $formPost;
+        }
         
         $subscriptions  = $cart->getSubscriptions();
         $hasPricingPlan = ! empty( $subscriptions );
