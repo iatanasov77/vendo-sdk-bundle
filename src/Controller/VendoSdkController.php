@@ -12,6 +12,8 @@ class VendoSdkController extends AbstractCheckoutController
     public function prepareAction( Request $request ): Response
     {
         $cart           = $this->orderFactory->getShoppingCart();
+        $formPost       = $request->request->all( 'vendo_credit_card_form' );
+        echo '<pre>'; var_dump( $formPost ); die;
         $payment        = $this->preparePayment( $cart );
         
         $captureToken   = $this->payum->getTokenFactory()->createCaptureToken(
@@ -19,9 +21,6 @@ class VendoSdkController extends AbstractCheckoutController
             $payment,
             'vs_vendo_sdk_done'
         );
-        
-        //$captureUrl = base64_encode( $captureToken->getTargetUrl() );
-        //return $this->redirect( $this->generateUrl( 'vs_payment_show_credit_card_form', ['formAction' => $captureUrl] ) );
         
         return $this->redirect( $captureToken->getTargetUrl() );
     }
