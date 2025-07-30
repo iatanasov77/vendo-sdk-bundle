@@ -19,7 +19,7 @@ class Api
         $this->options = $options;
     }
     
-    public function doPreAuthorizeCreditCard()
+    public function doPreAuthorizeCreditCard( array $fields )
     {
         $creditCardPayment = new Payment();
         $creditCardPayment->setApiSecret( $this->options['api_secret'] );
@@ -32,8 +32,8 @@ class Api
         // the CapturePayment class.
         $creditCardPayment->setPreAuthOnly( true );
         
-        $creditCardPayment->setAmount(8.00);
-        $creditCardPayment->setCurrency(\VendoSdk\Vendo::CURRENCY_USD);
+        $creditCardPayment->setAmount( $fields['amount'] );
+        $creditCardPayment->setCurrency( $fields['currency'] ); // \VendoSdk\Vendo::CURRENCY_EUR
         
         $externalRef = new \VendoSdk\S2S\Request\Details\ExternalReferences();
         $externalRef->setTransactionReference('your_tx_reference_999');
