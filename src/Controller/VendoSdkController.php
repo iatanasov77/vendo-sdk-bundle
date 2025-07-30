@@ -20,10 +20,10 @@ class VendoSdkController extends AbstractCheckoutController
             'vs_vendo_sdk_done'
         );
         
-        $captureUrl = base64_encode( $captureToken->getTargetUrl() );
-        return $this->redirect( $this->generateUrl( 'vs_payment_show_credit_card_form', ['formAction' => $captureUrl] ) );
+        //$captureUrl = base64_encode( $captureToken->getTargetUrl() );
+        //return $this->redirect( $this->generateUrl( 'vs_payment_show_credit_card_form', ['formAction' => $captureUrl] ) );
         
-        //return $this->redirect( $captureToken->getTargetUrl() );
+        return $this->redirect( $captureToken->getTargetUrl() );
     }
     
     protected function preparePayment( OrderInterface $cart )
