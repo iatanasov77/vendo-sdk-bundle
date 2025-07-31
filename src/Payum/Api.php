@@ -2,6 +2,11 @@
 
 use Payum\Core\Bridge\Spl\ArrayObject;
 use VendoSdk\S2S\Request\Payment;
+use VendoSdk\S2S\Request\Details\ExternalReferences;
+use VendoSdk\S2S\Request\Details\Item;
+use VendoSdk\S2S\Request\Details\PaymentMethod\CreditCard;
+use VendoSdk\S2S\Request\Details\Customer;
+use VendoSdk\S2S\Request\Details\ClientRequest;
 
 class Api
 {
@@ -21,67 +26,49 @@ class Api
         $this->options = $options;
     }
     
-    public function doPreAuthorizeCreditCard( array $fields )
+    public function doPreAuthorizeCreditCard( array $fields ): int
     {
-        $creditCardPayment = new Payment();
-        $creditCardPayment->setApiSecret( $this->options['api_secret'] );
-        $creditCardPayment->setMerchantId( $this->options['merchant_id'] );//Your Vendo Merchant ID
-        $creditCardPayment->setSiteId( $this->options['site_id'] );//Your Vendo Site ID
-        $creditCardPayment->setIsTest( $this->options['sandbox'] );
+        $creditCardPayment = $this->createCreditCardPayment( $fields );
         
         //Set this flag to true when you do not want to capture the transaction amount immediately, but only validate the
         // payment details and block (reserve) the amount. The capture of a preauth-only transaction can be performed with
         // the CapturePayment class.
         $creditCardPayment->setPreAuthOnly( true );
         
-        $creditCardPayment->setAmount( $fields['amount'] );
-        $creditCardPayment->setCurrency( $fields['currency'] ); // \VendoSdk\Vendo::CURRENCY_EUR
-        
-        $externalRef = new \VendoSdk\S2S\Request\Details\ExternalReferences();
-        $externalRef->setTransactionReference('your_tx_reference_999');
-        $creditCardPayment->setExternalReferences($externalRef);
+        $externalRef = new ExternalReferences();
+        $externalRef->setTransactionReference( $fields['local']['order']['id'] );
+        $creditCardPayment->setExternalReferences( $externalRef );
         
         /**
          * Add items to your request, you can add one or more
          */
-        $cartItem = new \VendoSdk\S2S\Request\Details\Item();
-        $cartItem->setId(123);//set your product id
-        $cartItem->setDescription('Registration fee');//your product description
-        $cartItem->setPrice(8.00);
-        $cartItem->setQuantity(1);
-        $creditCardPayment->addItem($cartItem);
+        foreach ( $fields['local']['order']['items'] as $itemFields ) {
+            $cartItem = $this->createCartItem( $itemFields );
+            $creditCardPayment->addItem( $cartItem );
+        }
         
         /**
          * Provide the credit card details that you collected from the user
          */
-        $ccDetails = new \VendoSdk\S2S\Request\Details\PaymentMethod\CreditCard();
-        $ccDetails->setNameOnCard('John Doe');
-        $ccDetails->setCardNumber('4111111111111111');//this is a test card number, it will only work for test transactions
-        $ccDetails->setExpirationMonth('05');
-        $ccDetails->setExpirationYear('2029');
-        $ccDetails->setCvv(123);//do not store nor log the CVV
-        $creditCardPayment->setPaymentDetails($ccDetails);
+        $ccDetails = $this->createCreditCard( $fields['local']['credit_card'] );
+        $creditCardPayment->setPaymentDetails( $ccDetails );
         
         /**
          * Customer details
          */
-        $customer = new \VendoSdk\S2S\Request\Details\Customer();
-        $customer->setFirstName('John');
-        $customer->setLastName('Doe');
-        $customer->setEmail('john.doe.test@thisisatest.test');
-        $customer->setLanguageCode('en');
-        $customer->setCountryCode('US');
-        $creditCardPayment->setCustomerDetails($customer);
+        $customer = $this->createCustomer( $fields['local']['customer'] );
+        $creditCardPayment->setCustomerDetails( $customer );
         
         /**
          * User request details
          */
-        $request = new \VendoSdk\S2S\Request\Details\ClientRequest();
-        $request->setIpAddress($_SERVER['REMOTE_ADDR'] ?: '127.0.0.1');//you must pass a valid IPv4 address
-        $request->setBrowserUserAgent($_SERVER['HTTP_USER_AGENT'] ?: null);
-        $creditCardPayment->setRequestDetails($request);
+        $request = new ClientRequest();
+        $request->setIpAddress( $fields['local']['client_request']['ip'] ?: '127.0.0.1' ); //you must pass a valid IPv4 address
+        $request->setBrowserUserAgent( $fields['local']['client_request']['browser'] ?: null );
+        $creditCardPayment->setRequestDetails( $request );
         
         $response = $creditCardPayment->postRequest();
+        return $response;
         
         echo "\n\nRESULT BELOW\n";
         if ($response->getStatus() == \VendoSdk\Vendo::S2S_STATUS_OK) {
@@ -104,5 +91,55 @@ class Api
             echo "\nwhen the user comes back you need to post the request to vendo again, please call credit_card_3ds_verifiction example.";
         }
         echo "\n\n\n";
+    }
+    
+    protected function createCreditCardPayment( array $fields ): Payment
+    {
+        $creditCardPayment = new Payment();
+        $creditCardPayment->setApiSecret( $this->options['api_secret'] );
+        $creditCardPayment->setMerchantId( $this->options['merchant_id'] );//Your Vendo Merchant ID
+        $creditCardPayment->setSiteId( $this->options['site_id'] );//Your Vendo Site ID
+        $creditCardPayment->setIsTest( $this->options['sandbox'] );
+        
+        $creditCardPayment->setAmount( $fields['amount'] );
+        $creditCardPayment->setCurrency( $fields['currency'] ); // \VendoSdk\Vendo::CURRENCY_EUR
+        
+        return $creditCardPayment;
+    }
+    
+    protected function createCartItem( array $itemFields ): Item
+    {
+        $cartItem = new Item();
+        $cartItem->setId( $itemFields['id'] ); //set your product id
+        $cartItem->setDescription( $itemFields['desc'] ); //your product description
+        $cartItem->setPrice( $itemFields['price'] );
+        $cartItem->setQuantity( $itemFields['qty'] );
+        
+        return $cartItem;
+    }
+    
+    protected function createCreditCard( array $ccFields ): CreditCard
+    {
+        $ccDetails = new CreditCard();
+        $ccDetails->setNameOnCard( $ccFields['name'] );
+        //$ccDetails->setCardNumber( '4111111111111111' ); //this is a test card number, it will only work for test transactions
+        $ccDetails->setCardNumber( $ccFields['number'] );
+        $ccDetails->setExpirationMonth( $ccFields['ccmonth'] );
+        $ccDetails->setExpirationYear( $ccFields['ccyear'] );
+        $ccDetails->setCvv( \intval( $ccFields['cvv'] ) ); //do not store nor log the CVV
+        
+        return $ccDetails;
+    }
+    
+    protected function createCustomer( array $customerFields ): Customer
+    {
+        $customer = new Customer();
+        $customer->setFirstName( $customerFields['first_name'] );
+        $customer->setLastName( $customerFields['last_name'] );
+        $customer->setEmail( $customerFields['email'] );
+        $customer->setLanguageCode( $customerFields['language_code'] );
+        $customer->setCountryCode( $customerFields['country_code'] );
+        
+        return $customer;
     }
 }

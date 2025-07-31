@@ -13,7 +13,11 @@ class VendoSdkController extends AbstractCheckoutController
     {
         $cart           = $this->orderFactory->getShoppingCart();
         $formPost       = $request->request->all( 'credit_card_form' );
-        $payment        = $this->preparePayment( $cart, $formPost );
+        $requestDetails = [
+            'ip'        => $request->getClientIp(),
+            'browser'   => $request->headers->get( 'User-Agent' ),
+        ];
+        $payment        = $this->preparePayment( $cart, $formPost, $requestDetails );
         
         $captureToken   = $this->payum->getTokenFactory()->createCaptureToken(
             $cart->getPaymentMethod()->getGateway()->getGatewayName(),
@@ -24,7 +28,7 @@ class VendoSdkController extends AbstractCheckoutController
         return $this->redirect( $captureToken->getTargetUrl() );
     }
     
-    protected function preparePayment( OrderInterface $cart, array $formPost )
+    protected function preparePayment( OrderInterface $cart, array $formPost, array $requestDetails )
     {
         $storage = $this->payum->getStorage( $this->paymentClass );
         $payment = $storage->create();
@@ -42,6 +46,10 @@ class VendoSdkController extends AbstractCheckoutController
         
         // Payment Details
         $paymentDetails   = $this->preparePaymentDetails( $cart, $formPost );
+        $paymentDetails['local']['order'] = $this->prepareOrderDetails( $cart );
+        $paymentDetails['local']['customer'] = $this->prepareCustomerDetails();
+        $paymentDetails['local']['client_request'] = $requestDetails;
+        
         $payment->setDetails( $paymentDetails );
         
         $this->doctrine->getManager()->persist( $cart );
@@ -82,5 +90,39 @@ class VendoSdkController extends AbstractCheckoutController
         }
         
         return $paymentDetails;
+    }
+    
+    protected function prepareOrderDetails( OrderInterface $cart ): array
+    {
+        $orderDetails   = [
+            'order_id'      => $cart->getId(),
+            'description'   => $cart->getDescription(),
+            'items'         => [],
+        ];
+        
+        foreach ( $cart->getItems() as $item ) {
+            $orderDetails['items'][] = [
+                'id'    => $item->getId(),
+                'desc'  => '',
+                'price' => $item->getPrice(),
+                'qty'   => $item->getQty(),
+            ];
+        }
+        
+        return $orderDetails;
+    }
+    
+    protected function prepareCustomerDetails(): array
+    {
+        $user   = $this->securityBridge->getUser();
+        $customerDetails = [
+            'first_name'    => $user->getInfo()->getFirstName(),
+            'last_name'     => $user->getInfo()->getLastName(),
+            'email'         => $user->getEmail(),
+            'language_code' => \explode( '_', $user->getPreferedLocale() )[0],
+            'country_code'  => \explode( '_', $user->getPreferedLocale() )[1],
+        ];
+        
+        return $customerDetails;
     }
 }
