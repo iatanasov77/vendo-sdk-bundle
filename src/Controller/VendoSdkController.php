@@ -150,7 +150,7 @@ class VendoSdkController extends AbstractCheckoutController
         foreach ( $cart->getItems() as $item ) {
             $orderDetails['items'][] = [
                 'id'    => $item->getId(),
-                'desc'  => '',
+                'desc'  => $cart->getDescription(),
                 'price' => $item->getPrice(),
                 'qty'   => $item->getQty(),
             ];
