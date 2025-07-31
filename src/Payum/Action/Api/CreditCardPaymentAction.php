@@ -50,9 +50,9 @@ class CreditCardPaymentAction implements ActionInterface, ApiAwareInterface
                 $model['credit_card_token'] = $response->getPaymentToken();
             }
         } catch ( VendoSdkException $e ) {
-            die ( 'An error occurred when processing your API request. Error message: ' . $e->getMessage() );
+            $model['error'] = 'An error occurred when processing your API request. Error message: ' . $e->getMessage();
         } catch ( GuzzleException $e ) {
-            die ( 'An error occurred when processing the HTTP request. Error message: ' . $e->getMessage() );
+            $model['error'] = 'An error occurred when processing the HTTP request. Error message: ' . $e->getMessage();
         }
     }
 
