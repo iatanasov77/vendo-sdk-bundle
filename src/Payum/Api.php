@@ -44,6 +44,7 @@ class Api
      */
     public function doCreditCardPayment( array $model, array $clientRequest ): PaymentResponse
     {
+        echo '<pre>'; var_dump( $this->options['sandbox'] ); die;
         $creditCardPayment = $this->createCreditCardPayment( $model['amount'], $model['currency'] );
         $creditCardPayment->setPreAuthOnly( true );
         
