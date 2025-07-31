@@ -2,6 +2,6 @@
 
 use Payum\Core\Request\Generic;
 
-class ReverseTransaction extends Generic
-{
+class CapturePayment extends Generic
+{ 
 }

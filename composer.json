@@ -20,7 +20,7 @@
     ],
     "require": {
         "vendoservices/vendo-sdk": "^2.0",
-        "vankosoft/payment-bundle": "^4.4"
+        "vankosoft/payment-bundle": "^4.5"
     },
     "autoload": {
         "psr-4": {

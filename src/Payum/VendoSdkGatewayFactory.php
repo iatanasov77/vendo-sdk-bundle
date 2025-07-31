@@ -11,9 +11,9 @@ use Vankosoft\VendoSdkBundle\Payum\Action\NotifyAction;
 use Vankosoft\VendoSdkBundle\Payum\Action\RefundAction;
 use Vankosoft\VendoSdkBundle\Payum\Action\StatusAction;
 
-use Vankosoft\VendoSdkBundle\Payum\Action\Api\CreateTransactionAction;
-use Vankosoft\VendoSdkBundle\Payum\Action\Api\CheckTransactionStatusAction;
-use Vankosoft\VendoSdkBundle\Payum\Action\Api\ReverseTransactionAction;
+use Vankosoft\VendoSdkBundle\Payum\Action\Api\CreditCardPaymentAction;
+use Vankosoft\VendoSdkBundle\Payum\Action\Api\CapturePaymentAction;
+use Vankosoft\VendoSdkBundle\Payum\Action\Api\RecurringPaymentAction;
 
 class VendoSdkGatewayFactory extends GatewayFactory
 {
@@ -37,9 +37,9 @@ class VendoSdkGatewayFactory extends GatewayFactory
             'payum.action.status'               => new StatusAction(),
             'payum.action.convert_payment'      => new ConvertPaymentAction(),
             
-            'payum.action.create_transaction'   => new CreateTransactionAction(),
-            'payum.action.check_transaction'    => new CheckTransactionStatusAction(),
-            'payum.action.reverse_transaction'  => new ReverseTransactionAction(),
+            'payum.action.credit_card_payment'  => new CreditCardPaymentAction(),
+            'payum.action.capture_payment'      => new CapturePaymentAction(),
+            'payum.action.recurring_payment'    => new RecurringPaymentAction(),
         ]);
 
         if ( false == $config['payum.api'] ) {
@@ -55,7 +55,7 @@ class VendoSdkGatewayFactory extends GatewayFactory
             $config['payum.api'] = function ( ArrayObject $config ) {
                 $config->validateNotEmpty( $config['payum.required_options'] );
 
-                return new Keys( $config );
+                return new Api( (array)$config );
             };
         }
     }

@@ -2,6 +2,6 @@
 
 use Payum\Core\Request\Generic;
 
-class CreateTransaction extends Generic
+class RecurringPayment extends Generic
 {
 }
