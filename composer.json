@@ -27,8 +27,5 @@
             "Vankosoft\\VendoSdkBundle\\": "src/"
         }
     },
-    "suggest": {
-        "vankosoft/catalog-bundle": "Install this package to can make recurring payments."
-    },
     "minimum-stability" : "dev"
 }
