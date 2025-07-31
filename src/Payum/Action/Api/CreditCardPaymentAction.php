@@ -34,8 +34,8 @@ class CreditCardPaymentAction implements ActionInterface, ApiAwareInterface
 
         $model = ArrayObject::ensureArrayObject( $request->getModel() );
         
-        $model['order'] = $model['local']['credit_card'];
-        $model['customer'] = $model['local']['credit_card'];
+        $model['order'] = $model['local']['order'];
+        $model['customer'] = $model['local']['customer'];
         $model['credit_card'] = $model['local']['credit_card'];
         
         try {
