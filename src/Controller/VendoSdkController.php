@@ -73,7 +73,7 @@ class VendoSdkController extends AbstractCheckoutController
             // failure
             return $this->paymentFailed( $request, $paymentStatus );
         }
-        echo '<pre>'; var_dump( $paymentStatus ); die;
+        echo '<pre>'; var_dump( $paymentStatus->getValue() ); die;
     }
     
     protected function preparePayment( OrderInterface $cart, array $formPost, array $requestDetails )
