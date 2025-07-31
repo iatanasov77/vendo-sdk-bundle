@@ -12,6 +12,8 @@ use Vankosoft\VendoSdkBundle\Payum\Action\RefundAction;
 use Vankosoft\VendoSdkBundle\Payum\Action\StatusAction;
 
 use Vankosoft\VendoSdkBundle\Payum\Action\Api\CreditCardPaymentAction;
+use Vankosoft\VendoSdkBundle\Payum\Action\Api\CapturePaymentAction;
+use Vankosoft\VendoSdkBundle\Payum\Action\Api\RecurringPaymentAction;
 
 class VendoSdkGatewayFactory extends GatewayFactory
 {
@@ -36,6 +38,8 @@ class VendoSdkGatewayFactory extends GatewayFactory
             'payum.action.convert_payment'      => new ConvertPaymentAction(),
             
             'payum.action.credit_card_payment'  => new CreditCardPaymentAction(),
+            'payum.action.capture_payment'      => new CapturePaymentAction(),
+            'payum.action.recurring_payment'    => new RecurringPaymentAction(),
         ]);
 
         if ( false == $config['payum.api'] ) {

@@ -1,7 +1,6 @@
 <?php namespace Vankosoft\VendoSdkBundle\Payum\Action\Api;
 
 use Payum\Core\Bridge\Spl\ArrayObject;
-use Payum\Core\Exception\LogicException;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\ApiAwareInterface;
@@ -10,6 +9,7 @@ use Payum\Core\GatewayAwareTrait;
 
 use GuzzleHttp\Exception\GuzzleException;
 use VendoSdk\Exception as VendoSdkException;
+use VendoSdk\Vendo;
 
 use Vankosoft\VendoSdkBundle\Payum\Api;
 use Vankosoft\VendoSdkBundle\Payum\Request\Api\CreditCardPayment;
@@ -39,12 +39,16 @@ class CreditCardPaymentAction implements ActionInterface, ApiAwareInterface
         $model['credit_card'] = $model['local']['credit_card'];
         
         try {
-            $response = $this->api->doPreAuthorizeCreditCard(
+            $response = $this->api->doCreditCardPayment( 
                 $model->toUnsafeArrayWithoutLocal(),
                 $model['local']['client_request']
             );
             
-            $model['status']  = $response->getStatus();
+            $model['status'] = $response->getStatus();
+            if ( $model['status'] == Vendo::S2S_STATUS_OK ) {
+                $model['transaction'] = $response->getTransactionDetails()->getId();
+                $model['credit_card_token'] = $response->getPaymentToken();
+            }
         } catch ( VendoSdkException $e ) {
             die ( 'An error occurred when processing your API request. Error message: ' . $e->getMessage() );
         } catch ( GuzzleException $e ) {
