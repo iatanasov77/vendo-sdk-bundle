@@ -33,11 +33,11 @@ class CreditCardPaymentAction implements ActionInterface, ApiAwareInterface
         RequestNotSupportedException::assertSupports( $this, $request );
 
         $model = ArrayObject::ensureArrayObject( $request->getModel() );
-        $model['status'] = 'NEW';
-        echo '<pre>'; var_dump( $model ); die;
+        $model['card'] = $model['local']['credit_card'];
         
         try {
-            $status  = $this->api->doPreAuthorizeCreditCard( (array)$model );
+            //$model['status']  = $this->api->doPreAuthorizeCreditCard( $model->toUnsafeArrayWithoutLocal() );
+            $model['status']  = $this->api->doPreAuthorizeCreditCard( (array)$model );
         } catch ( VendoSdkException $e ) {
             die ( 'An error occurred when processing your API request. Error message: ' . $e->getMessage() );
         } catch ( GuzzleException $e ) {

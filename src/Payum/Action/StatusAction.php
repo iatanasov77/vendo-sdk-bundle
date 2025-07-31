@@ -4,7 +4,7 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Vankosoft\VendoSdkBundle\Payum\Constants;
+use VendoSdk\Vendo;
 
 class StatusAction implements ActionInterface
 {
@@ -37,12 +37,25 @@ class StatusAction implements ActionInterface
             return;
         }
         
-        if ( Constants::STATUS_FAILED == $model['status'] ) {
+        if ( $model['status'] == Vendo::S2S_STATUS_NOT_OK ) {
             $request->markFailed();
             
             return;
         }
         
+        if ( $model['status'] == Vendo::S2S_STATUS_OK ) {
+            $request->markCaptured();
+            
+            return;
+        }
+        
+        if ( $model['status'] == Vendo::S2S_STATUS_VERIFICATION_REQUIRED ) {
+            $request->markPending();
+            
+            return;
+        }
+        
+        /*
         if ( Constants::STATUS_SUCCEEDED == $model['status'] && $model['captured'] && $model['paid'] ) {
             $request->markCaptured();
             
@@ -66,6 +79,7 @@ class StatusAction implements ActionInterface
             
             return;
         }
+        */
         
         $request->markUnknown();
     }
