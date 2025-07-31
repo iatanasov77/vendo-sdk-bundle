@@ -1,3 +1,15 @@
+0.1.3	|	Release date: **31.07.2025**
+============================================
+* New Features and Improvements:
+  - Make Refactoring of the API and Payum related Classes.
+  - Debug CreditCardPayment Request.
+  - Add More Payment Fields in Payment Prepare Action.
+  - Ready to Test a Vendo CreditCardPayment .
+  - Add More Payum Actions.
+* Bug-Fixes:
+  - Fix Create Payment Deatails Item.
+
+
 0.1.2	|	Release date: **27.07.2025**
 ============================================
 * Bug-Fixes:
