@@ -142,7 +142,7 @@ class VendoSdkController extends AbstractCheckoutController
     protected function prepareOrderDetails( OrderInterface $cart ): array
     {
         $orderDetails   = [
-            'order_id'      => $cart->getId(),
+            'id'      => $cart->getId(),
             'description'   => $cart->getDescription(),
             'items'         => [],
         ];
