@@ -7,6 +7,7 @@ use VendoSdk\S2S\Request\Details\Item;
 use VendoSdk\S2S\Request\Details\PaymentMethod\CreditCard;
 use VendoSdk\S2S\Request\Details\Customer;
 use VendoSdk\S2S\Request\Details\ClientRequest;
+use VendoSdk\S2S\Response\PaymentResponse;
 
 class Api
 {
@@ -26,9 +27,9 @@ class Api
         $this->options = $options;
     }
     
-    public function doPreAuthorizeCreditCard( array $fields ): int
+    public function doPreAuthorizeCreditCard( array $model, array $clientRequest ): PaymentResponse
     {
-        $creditCardPayment = $this->createCreditCardPayment( $fields );
+        $creditCardPayment = $this->createCreditCardPayment( $model['amount'], $model['currency'] );
         
         //Set this flag to true when you do not want to capture the transaction amount immediately, but only validate the
         // payment details and block (reserve) the amount. The capture of a preauth-only transaction can be performed with
@@ -36,13 +37,13 @@ class Api
         $creditCardPayment->setPreAuthOnly( true );
         
         $externalRef = new ExternalReferences();
-        $externalRef->setTransactionReference( $fields['local']['order']['id'] );
+        $externalRef->setTransactionReference( $model['order']['id'] );
         $creditCardPayment->setExternalReferences( $externalRef );
         
         /**
          * Add items to your request, you can add one or more
          */
-        foreach ( $fields['local']['order']['items'] as $itemFields ) {
+        foreach ( $model['order']['items'] as $itemFields ) {
             $cartItem = $this->createCartItem( $itemFields );
             $creditCardPayment->addItem( $cartItem );
         }
@@ -50,28 +51,27 @@ class Api
         /**
          * Provide the credit card details that you collected from the user
          */
-        $ccDetails = $this->createCreditCard( $fields['local']['credit_card'] );
+        $ccDetails = $this->createCreditCard( $model['credit_card'] );
         $creditCardPayment->setPaymentDetails( $ccDetails );
         
         /**
          * Customer details
          */
-        $customer = $this->createCustomer( $fields['local']['customer'] );
+        $customer = $this->createCustomer( $model['customer'] );
         $creditCardPayment->setCustomerDetails( $customer );
         
         /**
          * User request details
          */
         $request = new ClientRequest();
-        $request->setIpAddress( $fields['local']['client_request']['ip'] ?: '127.0.0.1' ); //you must pass a valid IPv4 address
-        $request->setBrowserUserAgent( $fields['local']['client_request']['browser'] ?: null );
+        $request->setIpAddress( $clientRequest['ip'] ?: '127.0.0.1' ); //you must pass a valid IPv4 address
+        $request->setBrowserUserAgent( $clientRequest['browser'] ?: null );
         $creditCardPayment->setRequestDetails( $request );
         
-        $response = $creditCardPayment->postRequest();
-        return $response;
+        return $creditCardPayment->postRequest();
     }
     
-    protected function createCreditCardPayment( array $fields ): Payment
+    protected function createCreditCardPayment( float $amount, string $currency ): Payment
     {
         $creditCardPayment = new Payment();
         $creditCardPayment->setApiSecret( $this->options['api_secret'] );
@@ -79,8 +79,8 @@ class Api
         $creditCardPayment->setSiteId( $this->options['site_id'] );//Your Vendo Site ID
         $creditCardPayment->setIsTest( $this->options['sandbox'] );
         
-        $creditCardPayment->setAmount( $fields['amount'] );
-        $creditCardPayment->setCurrency( $fields['currency'] ); // \VendoSdk\Vendo::CURRENCY_EUR
+        $creditCardPayment->setAmount( $amount );
+        $creditCardPayment->setCurrency( $currency ); // \VendoSdk\Vendo::CURRENCY_EUR
         
         return $creditCardPayment;
     }
