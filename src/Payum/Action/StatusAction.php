@@ -25,15 +25,14 @@ class StatusAction implements ActionInterface
             return;
         }
         
-        if ( false == $model['status'] && false == $model['credit_card'] ) {
+        if ( false == $model['status'] && false == $model['transaction'] ) {
             $request->markNew();
             
             return;
         }
         
-        if ( false == $model['status'] && $model['credit_card'] ) {
-            //$request->markPending();
-            $request->markFailed();
+        if ( false == $model['status'] && $model['transaction'] ) {
+            $request->markPending();
             
             return;
         }
