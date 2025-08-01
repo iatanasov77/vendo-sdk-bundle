@@ -45,6 +45,8 @@ class CreditCardPaymentAction implements ActionInterface, ApiAwareInterface
             );
             
             $model['status'] = $response->getStatus();
+            $model['status_message'] = $this->api->getStatusMessage( $response );
+            
             if ( $model['status'] == Vendo::S2S_STATUS_OK ) {
                 $model['transaction'] = $response->getTransactionDetails()->getId();
                 $model['credit_card_token'] = $response->getPaymentToken();

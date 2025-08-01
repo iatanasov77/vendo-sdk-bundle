@@ -2,6 +2,7 @@
 
 use Payum\Core\Bridge\Spl\ArrayObject;
 
+use VendoSdk\Vendo;
 use VendoSdk\S2S\Request\Payment;
 use VendoSdk\S2S\Request\CapturePayment;
 
@@ -32,6 +33,36 @@ class Api
         $options = ArrayObject::ensureArrayObject( $options );
         $options->defaults( $this->options );
         $this->options = $options;
+    }
+    
+    public function getStatusMessage( mixed $response ): string
+    {
+        $message = '';
+        switch ( $response->getStatus() ) {
+            case Vendo::S2S_STATUS_OK:
+                $message = "The transactions was successfully processed. Vendo's Transaction ID is: {$response->getTransactionDetails()->getId()}";
+                $message .= "\n**IMPORTANT:** You must save the Vendo Transaction ID if you need to capture the payment later.";
+                $message .= "\nThe credit card payment Auth Code is: {$response->getCreditCardPaymentResult()->getAuthCode()}";
+                $message .= "\nThe Payment Details Token is: {$response->getPaymentToken()}";
+                $message .= "\nYou must save the payment details token if you need or want to process future recurring billing or one-clicks\n";
+                $message .= "\nThis is your transaction reference (the one you set it in the request): {$response->getExternalReferences()->getTransactionReference()}";
+                break;
+            case Vendo::S2S_STATUS_NOT_OK:
+                $message = "The transaction failed.";
+                $message .= "\nError message: {$response->getErrorMessage()}";
+                $message .= "\nError code: {$response->getErrorCode()}";
+                break;
+            case Vendo::S2S_STATUS_VERIFICATION_REQUIRED:
+                $message = "The transaction must be verified";
+                $message .= "\nYou MUST :";
+                $message .= "\n   1. Save the verificationId: {$response->getResultDetails()->getVerificationId()}";
+                $message .= "\n   2. Redirect the user to the verification URL: {$response->getResultDetails()->getVerificationUrl()}";
+                $message .= "\nthe user will verify his payment details, then he will be redirected to the Success URL that's configured in your account at Vendo's back office.";
+                $message .= "\nwhen the user comes back you need to post the request to vendo again, please call credit_card_3ds_verifiction example.";
+                break;
+        }
+        
+        return $message;
     }
     
     /**

@@ -36,6 +36,7 @@ class CapturePaymentAction implements ActionInterface, ApiAwareInterface
             $response = $this->api->doCapturePayment( $model['transaction'] );
             
             $model['status'] = $response->getStatus();
+            $model['status_message'] = $this->api->getStatusMessage( $response );
         } catch ( VendoSdkException $e ) {
             die ( 'An error occurred when processing your API request. Error message: ' . $e->getMessage() );
         } catch ( GuzzleException $e ) {

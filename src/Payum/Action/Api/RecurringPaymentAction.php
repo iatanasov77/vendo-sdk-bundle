@@ -45,6 +45,8 @@ class RecurringPaymentAction implements ActionInterface, ApiAwareInterface
             $response = $this->api->doRecurringPayment( $model->toUnsafeArrayWithoutLocal() );
             
             $model['status'] = $response->getStatus();
+            $model['status_message'] = $this->api->getStatusMessage( $response );
+            
             if ( $model['status'] == Vendo::S2S_STATUS_OK ) {
                 
             }
