@@ -21,6 +21,8 @@ class Api
     const PRICING_PLAN_ATTRIBUTE_KEY    = 'vendo_plan_id';
     const PAYMENT_TOKEN                 = 'vendo_payment_token';
     
+    const STATUS_ERROR                  = 'vendo_error';
+    
     /** @var mixed */
     protected $options = [];
 

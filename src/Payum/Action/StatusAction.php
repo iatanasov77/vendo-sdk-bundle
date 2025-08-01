@@ -5,6 +5,7 @@ use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
 use VendoSdk\Vendo;
+use Vankosoft\VendoSdkBundle\Payum\Api;
 
 class StatusAction implements ActionInterface
 {
@@ -37,7 +38,7 @@ class StatusAction implements ActionInterface
             return;
         }
         
-        if ( $model['status'] == Vendo::S2S_STATUS_NOT_OK ) {
+        if ( $model['status'] == Vendo::S2S_STATUS_NOT_OK || Api::STATUS_ERROR ) {
             $request->markFailed();
             
             return;
