@@ -1,3 +1,12 @@
+0.1.4	|	Release date: **01.08.2025**
+============================================
+* New Features:
+  - Debug Gateway Config.
+  - Debug Payum StatusAction.
+  - Adjust Payum StatusAction.
+  - Add an API Status Message in the Model.
+
+
 0.1.3	|	Release date: **31.07.2025**
 ============================================
 * New Features and Improvements:
